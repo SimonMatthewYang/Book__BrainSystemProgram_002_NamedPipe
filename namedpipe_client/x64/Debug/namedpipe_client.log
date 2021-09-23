@@ -1,0 +1,4 @@
+﻿  namedpipe_client.cpp
+C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namedpipe_client\namedpipe_client.cpp(87,2): warning C4267: '인수': 'size_t'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namedpipe_client\namedpipe_client.cpp(26,19): warning C4101: 'end_t' :참조되지 않은 지역 변수입니다.
+  namedpipe_client.vcxproj -> C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\x64\Debug\namedpipe_client.exe

@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <stdio.h>
 #include <time.h>
+#include <string>
+#include <fstream>
 
 #ifdef _UNICODE
 #define _tcout wcout
@@ -57,6 +59,7 @@ int _tmain(int argc, TCHAR* argv[])
     return 1;
 }
 
+
 int CommToClient(HANDLE hPipe, clock_t& start_t, clock_t& end_t)
 {
     TCHAR fileName[MAX_PATH];
@@ -85,6 +88,32 @@ int CommToClient(HANDLE hPipe, clock_t& start_t, clock_t& end_t)
     _tfopen_s(&filePtr, fileName, _T("r"));
 
 
+    // Simon Test
+    ifstream f_readtxt(fileName, ios_base::in);
+
+    TCHAR str[BUF_SIZE];
+
+    string sRead;
+    wstring wsTemp;
+    wstring wsRead;
+    DWORD txtReadByte = 0;
+    if (f_readtxt.is_open())
+    {
+        while (f_readtxt.peek() != EOF)
+        {
+            getline(f_readtxt, sRead);
+            wsTemp.assign(sRead.begin(), sRead.end());
+
+            txtReadByte += sizeof(wsTemp);
+
+            wsRead.append(wsTemp);
+            //wsRead.append(_T("\n"));
+        }
+        f_readtxt.close();
+    }
+    
+    _tcout << wsRead << _T("sizeof = ") << txtReadByte << endl;
+
     if (filePtr == NULL)
     {
         _tcout << _T("File Open Fault!") << endl;
@@ -94,27 +123,43 @@ int CommToClient(HANDLE hPipe, clock_t& start_t, clock_t& end_t)
     DWORD bytesWritten = 0;
     DWORD bytesRead = 0;
     
-    while (!feof(filePtr))
-    {
-        bytesRead = fread(dataBuf, 1, BUF_SIZE, filePtr);
 
-        WriteFile(
-            hPipe,
-            dataBuf,
-            bytesRead,
-            &bytesWritten,
-            NULL
-        );
+    WriteFile(
+        hPipe,
+        wsRead.c_str(),
+        txtReadByte,
+        &bytesWritten,
+        NULL
+    );
+    curTime = time(NULL);
+    _tcout << _T(" >>> 04 Write File : ") << wsRead << _T("   ") << curTime << endl;
 
-        curTime = time(NULL);
-        _tcout << _T(" >>> 04 Write File : ") << dataBuf << _T("   ") << curTime << endl;
 
-        if (bytesRead != bytesWritten)
-        {
-            _tcout << _T("Pipe Wirte Messgae Eeror!") << endl;
-            break;
-        }
-    }
+    //while (!feof(filePtr))
+    //{
+    //    bytesRead = fread(dataBuf, 1, BUF_SIZE, filePtr);
+    //    
+    //    _tcout << _T(".txt dataRead : ") << bytesRead << endl;
+    //    _tcout << _T(".txt dataBuf : ") << dataBuf << endl;
+    //    _tcout << _T(".txt dataBuf(sizeof) : ") << sizeof(dataBuf) << endl;
+
+    //    WriteFile(
+    //        hPipe,
+    //        dataBuf,
+    //        bytesRead,
+    //        &bytesWritten,
+    //        NULL
+    //    );
+
+    //    curTime = time(NULL);
+    //    _tcout << _T(" >>> 04 Write File : ") << dataBuf << _T("   ") << curTime << endl;
+
+    //    if (bytesRead != bytesWritten)
+    //    {
+    //        _tcout << _T("Pipe Wirte Messgae Eeror!") << endl;
+    //        break;
+    //    }
+    //}
 
     FlushFileBuffers(hPipe);
     DisconnectNamedPipe(hPipe);
