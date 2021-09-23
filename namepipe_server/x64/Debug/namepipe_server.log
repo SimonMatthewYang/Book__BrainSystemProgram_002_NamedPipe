@@ -1,4 +1,7 @@
 ﻿  namepipe_server.cpp
-C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namepipe_server\namepipe_server.cpp(94,11): warning C4101: 'str' :참조되지 않은 지역 변수입니다.
-C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namepipe_server\namepipe_server.cpp(66,11): warning C4101: 'dataBuf' :참조되지 않은 지역 변수입니다.
+C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namepipe_server\namepipe_server.cpp(36,10): warning C4101: 'buf' :참조되지 않은 지역 변수입니다.
+C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namepipe_server\namepipe_server.cpp(33,11): warning C4101: 'tb' :참조되지 않은 지역 변수입니다.
+C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namepipe_server\namepipe_server.cpp(34,8): warning C4101: 'tstruct' :참조되지 않은 지역 변수입니다.
+C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namepipe_server\namepipe_server.cpp(119,11): warning C4101: 'str' :참조되지 않은 지역 변수입니다.
+C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\namepipe_server\namepipe_server.cpp(84,11): warning C4101: 'dataBuf' :참조되지 않은 지역 변수입니다.
   namepipe_server.vcxproj -> C:\CODE\CPP\book_brain_system_program\002_Named_pipe\namepipe_server\x64\Debug\namepipe_server.exe

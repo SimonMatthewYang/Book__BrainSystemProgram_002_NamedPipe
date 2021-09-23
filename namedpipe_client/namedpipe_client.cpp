@@ -6,6 +6,8 @@
 #include <tchar.h>
 #include <Windows.h>
 #include <time.h>
+#include <string>
+#include <fstream>
 
 #ifdef _UNICODE
 #define _tcout wcout
@@ -26,7 +28,7 @@ int _tmain(int argc, TCHAR* argv[])
 	clock_t start_t, end_t;
 
 	start_t = clock();
-
+	SYSTEMTIME cur_time;
 	// Loop Connect Pipe Handle
 	while (true)
 	{
@@ -40,8 +42,9 @@ int _tmain(int argc, TCHAR* argv[])
 			NULL
 		);
 
-		time_t curTime = time(NULL);
-		_tcout << _T("}} CLIEND 01 - CreateFile - Connect!!") << curTime << endl;
+		
+		GetLocalTime(&cur_time);
+		_tcout << _T("01_CreateFile ConnectPipe - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
 
 		// 연결 성공했다면 While 나간다.
 		if (hPipe != INVALID_HANDLE_VALUE)
@@ -78,6 +81,9 @@ int _tmain(int argc, TCHAR* argv[])
 	TCHAR fileName[] = _T("..\\news.txt");
 	DWORD bytesWritten = 0;
 	
+	GetLocalTime(&cur_time);
+	_tcout << _T("client_02_WriteFileName ConnectPipe Before - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
+
 	isSuccess = WriteFile(
 		hPipe // 서버 파이프와 연결된 핸들
 		, fileName // 전송할 메시지
@@ -86,7 +92,9 @@ int _tmain(int argc, TCHAR* argv[])
 		, NULL
 	);
 	time_t curTime = time(NULL);
-	_tcout << _T("}} CLIEND 02 - Write File Name   ") << curTime << endl;
+
+	GetLocalTime(&cur_time);
+	_tcout << _T("client_02_WriteFileName ConnectPipe - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
 
 	if (isSuccess == FALSE)
 	{
@@ -98,6 +106,8 @@ int _tmain(int argc, TCHAR* argv[])
 
 	while (true)
 	{
+		_tcout << _T("client_03_ReadServer_BufData ConnectPipe before - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
+
 		isSuccess = ReadFile(
 			hPipe
 			, readDataBuf
@@ -114,7 +124,9 @@ int _tmain(int argc, TCHAR* argv[])
 
 		readDataBuf[bytesRead] = 0;
 		curTime = time(NULL);
-		_tcout << _T("}} CLIEND 03 Read Buf Data : ") << readDataBuf  << curTime << endl;
+
+		GetLocalTime(&cur_time);
+		_tcout << _T("client_03_ReadServer_BufData ConnectPipe - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
 	}
 
 	CloseHandle(hPipe);

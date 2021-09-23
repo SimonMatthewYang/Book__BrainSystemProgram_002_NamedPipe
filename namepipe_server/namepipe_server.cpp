@@ -2,9 +2,14 @@
 #include <tchar.h>
 #include <Windows.h>
 #include <stdio.h>
-#include <time.h>
+
 #include <string>
 #include <fstream>
+
+
+#include <time.h>
+#include <sys/timeb.h>
+#include <sstream>   
 
 #ifdef _UNICODE
 #define _tcout wcout
@@ -25,6 +30,12 @@ int _tmain(int argc, TCHAR* argv[])
 
     start_t = clock();
 
+    timeb tb;   // <sys/timeb.h>                       
+    tm tstruct; // 기본 사용가능   
+    ostringstream oss;
+    char buf[128];
+
+
     while (true)
     {
         hPipe = CreateNamedPipe(
@@ -37,8 +48,13 @@ int _tmain(int argc, TCHAR* argv[])
             20000,
             NULL
         );
-        time_t curTime = time(NULL);
-        _tcout << _T(">>> 01 Create Pipe   ") << curTime <<  endl;
+
+        SYSTEMTIME cur_time;
+        GetLocalTime(&cur_time);
+
+        _tcout << _T("01_CreateNamePipe - ")  << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
+
+
 
         if (hPipe == INVALID_HANDLE_VALUE)
         {
@@ -48,8 +64,10 @@ int _tmain(int argc, TCHAR* argv[])
 
         BOOL isOk = 0;
         isOk = ConnectNamedPipe(hPipe, NULL) ? TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
-        curTime = time(NULL);
-        _tcout << _T(">>> 02 ConnectNamedPipe   ") << curTime << endl;
+
+        GetLocalTime(&cur_time);
+        _tcout << _T("02_ConnectNamePipe - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
+
 
         if (isOk)
             CommToClient(hPipe, start_t, end_t);
@@ -64,6 +82,11 @@ int CommToClient(HANDLE hPipe, clock_t& start_t, clock_t& end_t)
 {
     TCHAR fileName[MAX_PATH];
     TCHAR dataBuf[BUF_SIZE];
+
+    SYSTEMTIME cur_time;
+
+    GetLocalTime(&cur_time);
+    _tcout << _T("server_04_Read_Client_FileName Before - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
 
     BOOL isSuccess;
     DWORD fileNameSize;
@@ -81,11 +104,13 @@ int CommToClient(HANDLE hPipe, clock_t& start_t, clock_t& end_t)
         _tcout << _T("Pipe Read Message Error !!! ") << endl;
         return -1;
     }
-    time_t curTime = time(NULL);
-    _tcout << _T(" >>> 03 Read FileName : ") << fileName << _T("   ") << curTime << endl;
 
-    FILE* filePtr = NULL;
-    _tfopen_s(&filePtr, fileName, _T("r"));
+    
+    GetLocalTime(&cur_time);
+    _tcout << _T("server_04_Read_Client_FileName - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
+
+    //FILE* filePtr = NULL;
+    //_tfopen_s(&filePtr, fileName, _T("r"));
 
 
     // Simon Test
@@ -111,18 +136,19 @@ int CommToClient(HANDLE hPipe, clock_t& start_t, clock_t& end_t)
         }
         f_readtxt.close();
     }
-    
-    _tcout << wsRead << _T("sizeof = ") << txtReadByte << endl;
 
-    if (filePtr == NULL)
-    {
-        _tcout << _T("File Open Fault!") << endl;
-        return -1;
-    }
+    
+
+    //if (filePtr == NULL)
+    //{
+    //    _tcout << _T("File Open Fault!") << endl;
+    //    return -1;
+    //}
 
     DWORD bytesWritten = 0;
     DWORD bytesRead = 0;
     
+    _tcout << _T("server_05_Wirte_ReadFile before - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
 
     WriteFile(
         hPipe,
@@ -131,8 +157,9 @@ int CommToClient(HANDLE hPipe, clock_t& start_t, clock_t& end_t)
         &bytesWritten,
         NULL
     );
-    curTime = time(NULL);
-    _tcout << _T(" >>> 04 Write File : ") << wsRead << _T("   ") << curTime << endl;
+
+    GetLocalTime(&cur_time);
+    _tcout << _T("server_05_Wirte_ReadFile - ") << cur_time.wSecond << _T("-") << cur_time.wMilliseconds << endl;
 
 
     //while (!feof(filePtr))
